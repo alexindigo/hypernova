@@ -1,5 +1,8 @@
-function errorToSerializable(err) {
-  if (!err) return null;
+function errorToSerializable(error) {
+  if (error === undefined) return null;
+
+  // make sure it is an error object so we can serialize it properly
+  const err = error instanceof Error ? error : new Error(error);
   return {
     type: err.type,
     name: err.name,
