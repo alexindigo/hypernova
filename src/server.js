@@ -15,7 +15,7 @@ const defaultConfig = {
   bodyParser: {
     limit: 1024 * 1000,
   },
-  devMode: false,
+  clustering: true,
   files: [],
   logger: {},
   plugins: [],
@@ -33,14 +33,14 @@ export default function hypernova(userConfig, onServer) {
 
   const app = express();
 
-  if (config.devMode) {
-    worker(app, config, onServer);
-  } else {
+  if (config.clustering) {
     if (cluster.isMaster) {
       coordinator();
     } else {
       worker(app, config, onServer, cluster.worker.id);
     }
+  } else {
+    worker(app, config, onServer);
   }
 
   return app;
