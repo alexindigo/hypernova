@@ -7,15 +7,15 @@ import BatchManager from './utils/BatchManager';
 
 let closing = false;
 
-export const attachMiddleware = (app, config) => {
+const attachMiddleware = (app, config) => {
   app.use(bodyParser.json(config.bodyParser));
 };
 
-export const attachEndpoint = (app, config, callback) => {
+const attachEndpoint = (app, config, callback) => {
   app.post(config.endpoint, renderBatch(config, callback));
 };
 
-export const initServer = (app, config, callback) => {
+const initServer = (app, config, callback) => {
   let server;
 
   function exit(code) {
@@ -95,7 +95,7 @@ export const initServer = (app, config, callback) => {
     .catch(shutDownSequence);
 };
 
-export default (app, config, onServer, workerId) => {
+let worker = (app, config, onServer, workerId) => {
   // ===== Middleware =========================================================
   attachMiddleware(app, config);
 
@@ -116,3 +116,9 @@ export default (app, config, onServer, workerId) => {
     logger.info('Connected', { port: config.port });
   });
 };
+
+worker.attachMiddleware = attachMiddleware;
+worker.attachEndpoint = attachEndpoint;
+worker.initServer = initServer;
+
+export default worker;
